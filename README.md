@@ -7,7 +7,7 @@ Simple socket based, password authenticated bind shell for windows and linux sys
 I put this together as a quick and easy backdoor for KOTH games/TryHackMe rooms/HackTheBox boxes.
 
 ## Building
-Before building, change the password in src/main.rs (Line 8). After that, its as easy as running `cargo build --release`
+Before building, some settings can be adjusted in the source code under the imports in `src/main.rs` 
 
 ## Connecting
 
