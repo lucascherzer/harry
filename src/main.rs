@@ -4,9 +4,22 @@ use std::{
     io::{BufRead, BufReader, Read, Write},
     net::TcpListener,
     process::{Command, Output},
+    time::Duration,
 };
-
+// ---
+// Build time customizations
+/// The listening port
 const PORT: &str = "7869";
+/// The cooldown (in milliseconds) that a user is required to wait in between attempts at
+/// authentication. A correct password will simply be ignored if the cooldown is not yet
+/// finished
+const PASSWORD_COOLDOWN: u64 = 1000;
+/// The password used during authentication.
+/// # Disclaimer
+/// The password is hashed at build time which is not ideal in terms of security
+const PASS: &str = include_sha3!("changeme");
+// ---
+
 fn verify_sha3(attempt: &str, actual: &str) -> bool {
     let mut hasher = Sha3_512::new();
     hasher.update(attempt);
@@ -14,9 +27,8 @@ fn verify_sha3(attempt: &str, actual: &str) -> bool {
     hash == actual
 }
 fn main() {
-    #[allow(non_snake_case)]
-    let PASS = include_sha3!("changeme"); // CHANGE THIS
     let host = &*format!("0.0.0.0:{}", PORT);
+    let mut last_password_timestamp = std::time::Instant::now();
     loop {
         println!("Binding to {}", host);
         let listener = TcpListener::bind(host).expect("Address unavailable");
@@ -39,14 +51,18 @@ fn main() {
                             if !authenticated {
                                 println!("Not authenticated. Waiting for password");
                                 // Not authenticated. Start auth cycle
-                                if verify_sha3(&msg, PASS) {
+
+                                if verify_sha3(&msg, PASS)
+                                    && !(last_password_timestamp.elapsed()
+                                        < Duration::from_millis(PASSWORD_COOLDOWN))
+                                {
                                     authenticated = true;
                                     println!("Auth success");
                                     let _ = sock.write(b"Authenticated!\n");
                                     continue;
                                 } else {
-                                    std::thread::sleep(std::time::Duration::from_millis(20));
-                                    println!("Wrong password: {}", &msg);
+                                    last_password_timestamp = std::time::Instant::now();
+                                    println!("Wrong password or too quick: {}", &msg);
                                     continue;
                                 }
                             } else {

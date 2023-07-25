@@ -1,7 +1,8 @@
 # harry
 
-Simple socket based, password authenticated backdoor for windows and linux systems
+Simple socket based, password authenticated bind shell for windows and linux systems
 
+# Disclaimer
 **This is by no means secure and should not be used in scenarios where something of value is at stake**
 I put this together as a quick and easy backdoor for KOTH games/TryHackMe rooms/HackTheBox boxes.
 
