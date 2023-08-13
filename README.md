@@ -6,10 +6,10 @@ Simple socket based, password authenticated bind shell for windows and linux sys
 **This is by no means secure and should not be used in scenarios where something of value is at stake**
 I put this together as a quick and easy backdoor for KOTH games/TryHackMe rooms/HackTheBox boxes.
 
-## Building
+# Building
 Before building, some settings can be adjusted in the source code under the imports in `src/main.rs` 
 
-## Connecting
+# Connecting
 
 1. Connect to sock (e.g. via `nc`)
 2. Send plain text password
