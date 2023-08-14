@@ -7,6 +7,5 @@ edition = "2021"
 
 [dependencies]
 chrono = "0.4.23"
-obfustring = "0.5.0"
 proc-hash = "0.1.2"
 sha3 = "0.10.8"
